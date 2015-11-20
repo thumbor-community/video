@@ -10,7 +10,7 @@
 
 from os.path import abspath, join, dirname
 
-from unittest import TestCase
+from unittest import TestCase, SkipTest
 from preggy import expect
 import imghdr
 
@@ -63,7 +63,13 @@ class FileLoaderVideoTestCase(TestCase):
     def load_file(self, file_name):
         return load(self.ctx, file_name, lambda x: x).result()
 
+    def skip_if_no_ffmpeg(self):
+        import os
+        if not os.path.exists(self.ctx.config.FFMPEG_PATH):
+            raise SkipTest('ffmpeg not found in %s' % self.ctx.config.FFMPEG_PATH)
+
     def test_should_load_jpeg(self):
+        self.skip_if_no_ffmpeg()
         for filename in ('small.mp4', 'small.flv', 'small.3gp', 'small.ogv', 'small.webm'):
             result = self.load_file(filename)
             expect(result).to_be_instance_of(LoaderResult)
@@ -71,6 +77,7 @@ class FileLoaderVideoTestCase(TestCase):
             expect(result.successful).to_be_true()
 
     def test_should_fail_when_invalid_file(self):
+        self.skip_if_no_ffmpeg()
         result = self.load_file('empty.mp4')
         expect(result).to_be_instance_of(LoaderResult)
         expect(result.buffer).to_equal(None)
