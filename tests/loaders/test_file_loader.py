@@ -64,21 +64,25 @@ class FileLoaderVideoTestCase(TestCase):
         return load(self.ctx, file_name, lambda x: x).result()
 
     def test_should_load_jpeg(self):
-        for ext in ('mp4', 'flv', '3gp', 'ogv', 'webm'):
-            result = self.load_file('small.' + ext)
+        for filename in ('small.mp4', 'small.flv', 'small.3gp', 'small.ogv', 'small.webm'):
+            result = self.load_file(filename)
             expect(result).to_be_instance_of(LoaderResult)
             expect(result.buffer[:2]).to_equal('\xFF\xD8') # look for jpeg header
             expect(result.successful).to_be_true()
 
-    def test_should_fail_when_inexistent_file(self):
-        result = self.load_file('not_there.mp4')
+    def test_should_fail_when_invalid_file(self):
+        result = self.load_file('empty.mp4')
         expect(result).to_be_instance_of(LoaderResult)
         expect(result.buffer).to_equal(None)
         expect(result.successful).to_be_false()
 
-    def test_should_fail_when_outside_root_path(self):
-        result = self.load_file('../__init__.py')
+    def test_should_fail_when_ffmpeg_missing(self):
+        config = Config(
+            FILE_LOADER_ROOT_PATH=VIDEO_STORAGE_PATH,
+            FFMPEG_PATH = '/tmp/not_there'
+        )
+        self.ctx = Context(config=config)
+        result = self.load_file('small.mp4')
         expect(result).to_be_instance_of(LoaderResult)
         expect(result.buffer).to_equal(None)
         expect(result.successful).to_be_false()
-
