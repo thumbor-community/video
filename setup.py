@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
@@ -10,7 +10,7 @@ setup(
     license='MIT',
     author='Thumbor Community',
     description='Thumbor community video extensions',
-    packages=['tc_video'],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     platforms='any',
