@@ -17,5 +17,5 @@ This allows Thumbor to create thumbnails from video files.
 # Use the custom file loader
 LOADER = 'tc_video.loaders.file_loader'
 # Full path to ffmpeg
-FFMPEG = '/usr/bin/ffmpeg'
+FFMPEG_PATH = '/usr/bin/ffmpeg'
 ```
